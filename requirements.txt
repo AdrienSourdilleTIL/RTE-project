@@ -1,3 +1,4 @@
+api_rte @ git+https://github.com/ReinboldV/api_rte.git@8e6bb5e7be569c80a8a89d375013de7510befd75
 certifi==2024.7.4
 charset-normalizer==3.3.2
 idna==3.7

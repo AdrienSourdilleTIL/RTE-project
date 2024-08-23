@@ -95,7 +95,7 @@ def extract_values_to_dataframe(data):
     
     return df
 
-# Function to upload DataFrame to Snowflake
+# Function to upload DataFrame to Snowflake using a merge operation
 def upload_dataframe_to_snowflake(df):
     if df is None:
         print("No DataFrame to upload.")
@@ -111,15 +111,37 @@ def upload_dataframe_to_snowflake(df):
     )
 
     try:
-        # Use the Snowflake Connector's write_pandas function
-        from snowflake.connector.pandas_tools import write_pandas
+        # Use a temporary table to store the incoming data
+        temp_table = "TEMP_ELECTRICITY_CONSUMPTION"
         
-        success, nchunks, nrows, _ = write_pandas(conn, df, SNOWFLAKE_TABLE)
-        print(f"Data uploaded successfully: {nrows} rows affected.")
+        # Create temporary table (if not exists)
+        conn.cursor().execute(f"""
+            CREATE OR REPLACE TEMPORARY TABLE {temp_table} LIKE {SNOWFLAKE_TABLE}
+        """)
+        
+        # Use the Snowflake Connector's write_pandas function to insert data into the temp table
+        from snowflake.connector.pandas_tools import write_pandas
+        success, nchunks, nrows, _ = write_pandas(conn, df, temp_table)
+        
+        # Perform a merge to insert only the new rows
+        merge_query = f"""
+            MERGE INTO {SNOWFLAKE_TABLE} AS target
+            USING {temp_table} AS source
+            ON target.START_DATE = source.START_DATE 
+               AND target.END_DATE = source.END_DATE
+            WHEN NOT MATCHED THEN
+            INSERT (START_DATE, END_DATE, UPDATED_DATE, VALUE)
+            VALUES (source.START_DATE, source.END_DATE, source.UPDATED_DATE, source.VALUE);
+        """
+        
+        conn.cursor().execute(merge_query)
+        print(f"Data merged successfully: {nrows} new rows inserted.")
+        
     except Exception as e:
         print(f"Failed to upload DataFrame to Snowflake: {e}")
     finally:
         conn.close()
+
 
 # Main execution
 if __name__ == "__main__":
@@ -137,3 +159,4 @@ if __name__ == "__main__":
         upload_dataframe_to_snowflake(df)
     else:
         print("Failed to create DataFrame.")
+

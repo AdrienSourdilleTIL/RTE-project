@@ -32,5 +32,5 @@ jobs:
 
     - name: Run script
       run: |
-        python main.py
+        python testapi.py
 

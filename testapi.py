@@ -13,7 +13,6 @@ load_dotenv(dotenv_path)
 
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('ID_CLIENT')
-print(CLIENT_ID)
 CLIENT_SECRET = os.getenv('ID_SECRET')
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
@@ -34,11 +33,15 @@ def get_token():
         data={'grant_type': 'client_credentials'},
         auth=(CLIENT_ID, CLIENT_SECRET)
     )
+    print(f"Token request URL: {TOKEN_URL}")
+    print(f"Token request status code: {response.status_code}")
+    print(f"Token request response: {response.text}")
     if response.status_code == 200:
         return response.json().get('access_token')
     else:
         print(f"Failed to retrieve token: {response.status_code}")
         return None
+
 
 # Function to fetch data from API
 def fetch_data():

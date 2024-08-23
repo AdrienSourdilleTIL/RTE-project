@@ -153,7 +153,7 @@ if __name__ == "__main__":
     
     if df is not None:
         print("DataFrame created successfully.")
-        print(df.head())  # Display the first few rows of the DataFrame
+        print(df.tail())  # Display the last few rows of the DataFrame
         
         print("Uploading DataFrame to Snowflake...")
         upload_dataframe_to_snowflake(df)

@@ -1,17 +1,29 @@
 import os
-import requests
+import pandas as pd
+import snowflake.connector
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pytz
+import requests
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from the specified .env file
+dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
+load_dotenv(dotenv_path)
 
-# Retrieve credentials from environment variables
+# Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('ID_CLIENT')
 CLIENT_SECRET = os.getenv('ID_SECRET')
-TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'  # Update if necessary
+TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
+
+# Retrieve Snowflake credentials from environment variables
+SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')
+SNOWFLAKE_PASSWORD = os.getenv('SNOWFLAKE_PASSWORD')
+SNOWFLAKE_ACCOUNT = os.getenv('SNOWFLAKE_ACCOUNT')
+SNOWFLAKE_WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE')
+SNOWFLAKE_DATABASE = os.getenv('SNOWFLAKE_DATABASE')
+SNOWFLAKE_SCHEMA = os.getenv('SNOWFLAKE_SCHEMA')
+SNOWFLAKE_TABLE = 'ELECTRICITY_CONSUMPTION'  # Table name you created
 
 # Function to get the OAuth2 token
 def get_token():
@@ -26,50 +38,102 @@ def get_token():
         print(f"Failed to retrieve token: {response.status_code}")
         return None
 
-# Function to fetch data
+# Function to fetch data from API
 def fetch_data():
     token = get_token()
     if token is None:
         print("No token available. Exiting.")
-        return
-    
-    # Calculate the current time and the start time 48 hours ago
-    now = datetime.now(pytz.UTC)  # Use timezone-aware UTC time
-    end_date = now.strftime('%Y-%m-%dT%H:%M:%S%z')  # Format in ISO8601 with timezone
+        return None
+
+    now = datetime.now(pytz.UTC)
+    end_date = now.strftime('%Y-%m-%dT%H:%M:%S%z')
     start_date = (now - timedelta(hours=48)).strftime('%Y-%m-%dT%H:%M:%S%z')
-    
+
     # Adjust timezone format to ±HH:MM
     end_date = end_date[:22] + ":" + end_date[22:]
     start_date = start_date[:22] + ":" + start_date[22:]
-    
-    # Define the parameters for the API request
+
     params = {
         'type': 'REALISED,ID',
         'start_date': start_date,
         'end_date': end_date
     }
-    
+
     headers = {
         'Authorization': f'Bearer {token}',
         'Host': 'digital.iservices.rte-france.com'
     }
-    
-    print(f"Making request to {API_URL} with params {params}")
+
     response = requests.get(API_URL, headers=headers, params=params)
 
-    # Print status code and response content for debugging
-    print(f"Status Code: {response.status_code}")
-    print("Response Content:", response.text)
-    
     if response.status_code == 200:
-        print("Data fetched successfully!")
         return response.json()
     else:
         print(f"Failed to fetch data: {response.status_code}")
         return None
 
-# Run the function to test
+# Function to extract and convert lists under 'values' to DataFrame
+def extract_values_to_dataframe(data):
+    if data is None:
+        print("No data to convert.")
+        return None
+
+    records = data.get('short_term', [])
+
+    # Initialize list to hold values
+    all_values = []
+
+    for record in records:
+        values = record.get('values', [])
+        all_values.extend(values)  # Flatten the list of lists
+
+    # Create DataFrame from the flattened list of values
+    df = pd.DataFrame(all_values)
+    
+    # Capitalize the column names
+    df.columns = [col.upper() for col in df.columns]
+    
+    return df
+
+# Function to upload DataFrame to Snowflake
+def upload_dataframe_to_snowflake(df):
+    if df is None:
+        print("No DataFrame to upload.")
+        return
+
+    conn = snowflake.connector.connect(
+        user=SNOWFLAKE_USER,
+        password=SNOWFLAKE_PASSWORD,
+        account=SNOWFLAKE_ACCOUNT,
+        warehouse=SNOWFLAKE_WAREHOUSE,
+        database=SNOWFLAKE_DATABASE,
+        schema=SNOWFLAKE_SCHEMA
+    )
+
+    try:
+        # Use the Snowflake Connector's write_pandas function
+        from snowflake.connector.pandas_tools import write_pandas
+        
+        success, nchunks, nrows, _ = write_pandas(conn, df, SNOWFLAKE_TABLE)
+        print(f"Data uploaded successfully: {nrows} rows affected.")
+    except Exception as e:
+        print(f"Failed to upload DataFrame to Snowflake: {e}")
+    finally:
+        conn.close()
+
+# Main execution
 if __name__ == "__main__":
+    print("Fetching data from API...")
     data = fetch_data()
-    if data:
-        print(data)  # Process and store data as needed
+    
+    print("Extracting values and converting to DataFrame...")
+    df = extract_values_to_dataframe(data)
+    
+    if df is not None:
+        print("DataFrame created successfully.")
+        print(df.head())  # Display the first few rows of the DataFrame
+        
+        print("Uploading DataFrame to Snowflake...")
+        upload_dataframe_to_snowflake(df)
+    else:
+        print("Failed to create DataFrame.")

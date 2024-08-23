@@ -36,6 +36,7 @@ def get_token():
     print(f"Token request URL: {TOKEN_URL}")
     print(f"Token request status code: {response.status_code}")
     print(f"Token request response: {response.text}")
+    print(CLIENT_ID)
     if response.status_code == 200:
         return response.json().get('access_token')
     else:

@@ -1,38 +1,35 @@
-name: Daily Data Ingestion
+name: Python application
 
-# Controls when the action will run. In this case, it's scheduled to run daily at 1 AM UTC.
 on:
   schedule:
-    - cron: '0 15 * * *'  # This cron expression runs the job daily at 01:00 AM UTC
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    - cron: '0 7 * * *'  # Runs daily at midnight
+  push:
+    branches:
+      - main
 
 jobs:
-  run-script:
-    runs-on: ubuntu-latest  # The latest version of Ubuntu will be used as the runner
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        # This step checks out your repository so the workflow can access the script.
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'  # Replace with your Python version
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12.5'  # Specify the version of Python to use
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-        # This step installs the required Python packages defined in your `requirements.txt` file.
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run Data Ingestion Script
-        run: |
-          python data_ingestion.py
-        # This step runs your data ingestion script. Make sure to replace `path/to/your/` with the actual path.
+    - name: Verify installed packages
+      run: |
+        pip list
 
-      - name: Verify Upload Success
-        run: echo "Data ingestion completed successfully."
-        # You can add custom messages or steps here to verify that the script ran successfully.
+    - name: Run script
+      run: |
+        python data_ingestion.py
+

@@ -1,19 +1,14 @@
 import os
 import pandas as pd
 import snowflake.connector
-from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pytz
 import requests
 import matplotlib.pyplot as plt
 
-# Load environment variables from the specified .env file
-dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
-load_dotenv(dotenv_path)
-
 # Retrieve API credentials from environment variables
-CLIENT_ID = os.getenv('ID_CLIENT')
-CLIENT_SECRET = os.getenv('ID_SECRET')
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
 
@@ -24,7 +19,7 @@ SNOWFLAKE_ACCOUNT = os.getenv('SNOWFLAKE_ACCOUNT')
 SNOWFLAKE_WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE')
 SNOWFLAKE_DATABASE = os.getenv('SNOWFLAKE_DATABASE')
 SNOWFLAKE_SCHEMA = os.getenv('SNOWFLAKE_SCHEMA')
-SNOWFLAKE_TABLE = 'ELECTRICITY_CONSUMPTION'  # Table name you created
+SNOWFLAKE_TABLE = os.getenv('SNOWFLAKE_TABLE')  # Table name you created
 
 # Function to get the OAuth2 token
 def get_token():
@@ -36,13 +31,11 @@ def get_token():
     print(f"Token request URL: {TOKEN_URL}")
     print(f"Token request status code: {response.status_code}")
     print(f"Token request response: {response.text}")
-    print(CLIENT_ID)
     if response.status_code == 200:
         return response.json().get('access_token')
     else:
         print(f"Failed to retrieve token: {response.status_code}")
         return None
-
 
 # Function to fetch data from API
 def fetch_data():

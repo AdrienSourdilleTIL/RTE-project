@@ -13,6 +13,7 @@ load_dotenv(dotenv_path)
 
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('ID_CLIENT')
+print(CLIENT_ID)
 CLIENT_SECRET = os.getenv('ID_SECRET')
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'

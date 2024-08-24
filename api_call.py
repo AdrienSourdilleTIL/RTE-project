@@ -6,9 +6,11 @@ from datetime import datetime, timedelta
 import pytz
 import requests
 
-# Load environment variables from the specified .env file
-dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
-load_dotenv(dotenv_path)
+# Attempt to load .env file if it exists (for local development)
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+
 
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('ID_CLIENT')

@@ -4,17 +4,19 @@ import snowflake.connector
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 
-# Load environment variables
-dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
-load_dotenv(dotenv_path)
+# Attempt to load .env file if it exists (for local development)
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
 
+# Environment variables from GitHub Secrets will override .env values
 SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')
 SNOWFLAKE_PASSWORD = os.getenv('SNOWFLAKE_PASSWORD')
 SNOWFLAKE_ACCOUNT = os.getenv('SNOWFLAKE_ACCOUNT')
 SNOWFLAKE_WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE')
 SNOWFLAKE_DATABASE = os.getenv('SNOWFLAKE_DATABASE')
 SNOWFLAKE_SCHEMA = os.getenv('SNOWFLAKE_SCHEMA')
-SNOWFLAKE_TABLE = 'ELECTRICITY_CONSUMPTION'
+SNOWFLAKE_TABLE = os.getenv('ELECTRICITY_CONSUMPTION')
 
 def generate_chart():
     conn = snowflake.connector.connect(

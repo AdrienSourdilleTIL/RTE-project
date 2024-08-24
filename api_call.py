@@ -9,6 +9,7 @@ import requests
 # Load environment variables
 dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
 load_dotenv(dotenv_path)
+print(dotenv_path)
 
 
 # Retrieve API credentials from environment variables

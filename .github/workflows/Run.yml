@@ -24,7 +24,7 @@ jobs:
           source venv/bin/activate
           pip install -r requirements.txt  # Ensure your requirements are listed in this file
 
-      - name: Run Python script
+      - name: Run main script
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
@@ -39,3 +39,11 @@ jobs:
         run: |
           source venv/bin/activate
           python main.py
+
+      - name: Update chart on GitHub
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        run: |
+          source venv/bin/activate
+          python adding_chart.py # Adjust the path if needed

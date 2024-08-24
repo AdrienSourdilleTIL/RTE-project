@@ -4,10 +4,9 @@ import snowflake.connector
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 
-# Attempt to load .env file if it exists (for local development)
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+# Load environment variables
+dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
+load_dotenv(dotenv_path)
 
 # Environment variables from GitHub Secrets will override .env values
 SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')

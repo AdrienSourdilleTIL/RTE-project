@@ -4,7 +4,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from the specified .env file
+# Load environment variables
 dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
 load_dotenv(dotenv_path)
 

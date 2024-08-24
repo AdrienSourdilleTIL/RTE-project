@@ -6,10 +6,9 @@ from datetime import datetime, timedelta
 import pytz
 import requests
 
-# Attempt to load .env file if it exists (for local development)
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+# Load environment variables
+dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
+load_dotenv(dotenv_path)
 
 
 # Retrieve API credentials from environment variables
@@ -26,6 +25,7 @@ def get_token():
         auth=(CLIENT_ID, CLIENT_SECRET)
     )
     if response.status_code == 200:
+        print("token retrieved")
         return response.json().get('access_token')
     else:
         print(f"Failed to retrieve token: {response.status_code}")

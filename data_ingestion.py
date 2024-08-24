@@ -15,6 +15,7 @@ SNOWFLAKE_TABLE = os.getenv('ELECTRICITY_CONSUMPTION')
 
 # upload to snowflake
 
+# Function to upload DataFrame to Snowflake using a merge operation
 def upload_dataframe_to_snowflake(df):
     if df is None:
         print("No DataFrame to upload.")
@@ -30,14 +31,19 @@ def upload_dataframe_to_snowflake(df):
     )
 
     try:
+        # Use a temporary table to store the incoming data
         temp_table = "TEMP_ELECTRICITY_CONSUMPTION"
+        
+        # Create temporary table (if not exists)
         conn.cursor().execute(f"""
             CREATE OR REPLACE TEMPORARY TABLE {temp_table} LIKE {SNOWFLAKE_TABLE}
         """)
         
+        # Use the Snowflake Connector's write_pandas function to insert data into the temp table
         from snowflake.connector.pandas_tools import write_pandas
         success, nchunks, nrows, _ = write_pandas(conn, df, temp_table)
         
+        # Perform a merge to insert only the new rows
         merge_query = f"""
             MERGE INTO {SNOWFLAKE_TABLE} AS target
             USING {temp_table} AS source
@@ -55,3 +61,24 @@ def upload_dataframe_to_snowflake(df):
         print(f"Failed to upload DataFrame to Snowflake: {e}")
     finally:
         conn.close()
+
+    # Function to generate a chart from the DataFrame
+def generate_chart(df):
+    if df is None:
+        print("No DataFrame to plot.")
+        return
+
+    df['START_DATE'] = pd.to_datetime(df['START_DATE'])
+    df.set_index('START_DATE', inplace=True)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(df.index, df['VALUE'], marker='o', linestyle='-')
+    plt.title('Electricity Consumption Over Time')
+    plt.xlabel('Date')
+    plt.ylabel('Consumption')
+    plt.grid(True)
+
+    # Save the chart
+    plt.savefig('electricity_consumption_chart.png')
+    print("Chart saved as 'electricity_consumption_chart.png'.")
+

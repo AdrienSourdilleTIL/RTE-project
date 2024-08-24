@@ -1,17 +1,25 @@
 import os
 import pandas as pd
 import snowflake.connector
-from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pytz
 import requests
+import matplotlib.pyplot as plt
 
 # Retrieve API credentials from environment variables
-CLIENT_ID = os.getenv('ID_CLIENT')
-CLIENT_SECRET = os.getenv('ID_SECRET')
-print(CLIENT_ID)
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
+
+# Retrieve Snowflake credentials from environment variables
+SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')
+SNOWFLAKE_PASSWORD = os.getenv('SNOWFLAKE_PASSWORD')
+SNOWFLAKE_ACCOUNT = os.getenv('SNOWFLAKE_ACCOUNT')
+SNOWFLAKE_WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE')
+SNOWFLAKE_DATABASE = os.getenv('SNOWFLAKE_DATABASE')
+SNOWFLAKE_SCHEMA = os.getenv('SNOWFLAKE_SCHEMA')
+SNOWFLAKE_TABLE = os.getenv('SNOWFLAKE_TABLE')  # Table name you created
 
 # Function to get the OAuth2 token
 def get_token():
@@ -20,8 +28,10 @@ def get_token():
         data={'grant_type': 'client_credentials'},
         auth=(CLIENT_ID, CLIENT_SECRET)
     )
+    print(f"Token request URL: {TOKEN_URL}")
+    print(f"Token request status code: {response.status_code}")
+    print(f"Token request response: {response.text}")
     if response.status_code == 200:
-        print("token retrieved")
         return response.json().get('access_token')
     else:
         print(f"Failed to retrieve token: {response.status_code}")

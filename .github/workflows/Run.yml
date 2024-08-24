@@ -1,44 +1,30 @@
 name: Python application
 
-on:
-  schedule:
-    - cron: '0 1 * * *'  # Runs daily at midnight
-  push:
-    branches:
-      - main
+
+on: [push]
 
 jobs:
-  build:
+  print-secrets:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt  # Optional, if you have any dependencies
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12.5'  # Specify the version of Python to use
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install snowflake-connector-python
-        pip install -r requirements.txt
-
-    - name: Verify installed packages
-      run: |
-        pip list
-
-    - name: Run script
-      env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-        SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-        SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-        SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-        SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-        SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-      run: |
-        python main.py
+      - name: Print secrets
+        env:
+          MY_SECRET_KEY: ${{ secrets.MY_SECRET_KEY }}
+          ANOTHER_SECRET: ${{ secrets.ANOTHER_SECRET }}
+        run: |
+          python test.py

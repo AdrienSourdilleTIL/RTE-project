@@ -30,8 +30,8 @@ def get_token():
     )
     print(f"Token request URL: {TOKEN_URL}")
     print(f"Token request status code: {response.status_code}")
-    print(f"Token request response: {response.text}")
     if response.status_code == 200:
+        print('token retrieved succesfully')
         return response.json().get('access_token')
     else:
         print(f"Failed to retrieve token: {response.status_code}")
@@ -147,18 +147,32 @@ def generate_chart(df):
         print("No DataFrame to plot.")
         return
 
+    # Convert 'START_DATE' to datetime and set as index
     df['START_DATE'] = pd.to_datetime(df['START_DATE'])
     df.set_index('START_DATE', inplace=True)
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(df.index, df['VALUE'], marker='o', linestyle='-')
-    plt.title('Electricity Consumption Over Time')
-    plt.xlabel('Date')
-    plt.ylabel('Consumption')
-    plt.grid(True)
+    # Create the plot
+    plt.figure(figsize=(12, 8))
+    plt.plot(df.index, df['VALUE'], marker='o', linestyle='-', color='royalblue', linewidth=2, markersize=6, label='Daily Consumption')
+
+    # Add titles and labels
+    plt.title('Daily Electricity Consumption in France', fontsize=16, fontweight='bold')
+    plt.xlabel('Date', fontsize=14)
+    plt.ylabel('Total Consumption (MWh)', fontsize=14)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.7)
+    
+    # Improve the appearance of the x-axis and y-axis ticks
+    plt.xticks(rotation=45, fontsize=12)
+    plt.yticks(fontsize=12)
+    
+    # Add a legend
+    plt.legend(fontsize=12)
 
     # Save the chart
-    plt.savefig('electricity_consumption_chart.png')
+    plt.tight_layout()  # Adjust layout to fit labels and titles
+    plt.savefig('electricity_consumption_chart.png', dpi=300)  # Save with high resolution
+    plt.close()  # Close the plot to free up memory
+
     print("Chart saved as 'electricity_consumption_chart.png'.")
 
 # Main execution

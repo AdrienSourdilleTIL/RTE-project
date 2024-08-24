@@ -6,15 +6,11 @@ from datetime import datetime, timedelta
 import pytz
 import requests
 
-# Load environment variables
-dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
-load_dotenv(dotenv_path)
-print(dotenv_path)
-
 
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('ID_CLIENT')
 CLIENT_SECRET = os.getenv('ID_SECRET')
+print(CLIENT_ID)
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
 

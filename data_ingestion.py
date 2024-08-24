@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from api_call import extract_values_to_dataframe
 
 # Load environment variables
-dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv'
+dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
 load_dotenv(dotenv_path)
 
 SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')

@@ -8,8 +8,8 @@ import requests
 
 
 # Retrieve API credentials from environment variables
-CLIENT_ID = os.getenv('ID_CLIENT')
-CLIENT_SECRET = os.getenv('ID_SECRET')
+CLIENT_ID = os.environ['ID_CLIENT']
+CLIENT_SECRET = os.environ['ID_SECRET']
 print(CLIENT_ID)
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'

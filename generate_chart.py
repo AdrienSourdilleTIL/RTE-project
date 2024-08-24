@@ -4,10 +4,6 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
-dotenv_path = r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\Scripts\.env'
-load_dotenv(dotenv_path)
-
 # Retrieve Snowflake credentials from environment variables
 SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')
 SNOWFLAKE_PASSWORD = os.getenv('SNOWFLAKE_PASSWORD')

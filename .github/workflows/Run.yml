@@ -1,30 +1,39 @@
 name: Python application
 
-
-on: [push]
+on:
+  schedule:
+    - cron: '0 1 * * *'  # Runs every day at 1 AM UTC
 
 jobs:
-  print-secrets:
+  run-script:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      
+
       - name: Install dependencies
         run: |
           python -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt  # Optional, if you have any dependencies
+          pip install -r requirements.txt  # Ensure your requirements are listed in this file
 
-      - name: Print secrets
+      - name: Run Python script
         env:
-          MY_SECRET_KEY: ${{ secrets.CLIENT_ID }}
-          ANOTHER_SECRET: ${{ secrets.CLIENT_SECRET}}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+          SNOWFLAKE_TABLE: ${{ secrets.SNOWFLAKE_TABLE }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
         run: |
-          python test.py
+          source venv/bin/activate
+          python main.py

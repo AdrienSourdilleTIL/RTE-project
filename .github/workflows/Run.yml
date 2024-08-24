@@ -34,6 +34,7 @@ jobs:
           SNOWFLAKE_TABLE: ${{ secrets.SNOWFLAKE_TABLE }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          
         run: |
           source venv/bin/activate
           python main.py

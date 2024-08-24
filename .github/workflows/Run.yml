@@ -24,7 +24,7 @@ jobs:
 
       - name: Print secrets
         env:
-          MY_SECRET_KEY: ${{ secrets.MY_SECRET_KEY }}
-          ANOTHER_SECRET: ${{ secrets.ANOTHER_SECRET }}
+          MY_SECRET_KEY: ${{ secrets.CLIENT_ID }}
+          ANOTHER_SECRET: ${{ secrets.CLIENT_SECRET}}
         run: |
           python test.py

@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import pytz
 import requests
 
-
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('ID_CLIENT')
 CLIENT_SECRET = os.getenv('ID_SECRET')

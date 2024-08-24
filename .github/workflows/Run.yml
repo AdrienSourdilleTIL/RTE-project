@@ -22,7 +22,6 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt  # Ensure your requirements are listed in this file
 
       - name: Run main script
         env:
@@ -46,4 +45,4 @@ jobs:
 
         run: |
           source venv/bin/activate
-          python adding_chart.py # Adjust the path if needed
+          python adding_chart.py 

@@ -3,6 +3,7 @@ name: Python application
 on:
   schedule:
     - cron: '0 1 * * *'  # Runs every day at 1 AM UTC
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   run-script:
@@ -34,7 +35,7 @@ jobs:
           SNOWFLAKE_TABLE: ${{ secrets.SNOWFLAKE_TABLE }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          
+
         run: |
           source venv/bin/activate
           python main.py

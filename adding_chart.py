@@ -3,7 +3,7 @@ import requests
 from base64 import b64encode
 
 # GitHub credentials and repository information
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')'
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_OWNER = 'AdrienSourdilleTIL'  # Replace with your GitHub username
 REPO_NAME = 'RTE-project'  # Replace with your repository name
 FILE_PATH = 'electricity_consumption_chart.png'  # Path to the file in the repo

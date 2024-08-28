@@ -20,4 +20,4 @@ This project showcases an automated pipeline that queries the RTE (Réseau de Tr
 
 The latest energy consumption graph is displayed below and is updated daily:
 
-![Daily Energy Consumption](.electricity_consumption_chart.png)
+![Daily Energy Consumption](electricity_consumption_chart.png)

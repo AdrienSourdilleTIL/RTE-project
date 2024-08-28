@@ -35,7 +35,6 @@ jobs:
           SNOWFLAKE_TABLE: ${{ secrets.SNOWFLAKE_TABLE }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
 
         run: |
           source venv/bin/activate
@@ -43,7 +42,7 @@ jobs:
 
       - name: Update chart on GitHub
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
         run: |
           source venv/bin/activate

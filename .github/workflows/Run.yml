@@ -42,7 +42,7 @@ jobs:
 
       - name: Update chart on GitHub
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
 
         run: |
           source venv/bin/activate

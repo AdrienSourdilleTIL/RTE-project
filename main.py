@@ -147,8 +147,16 @@ def generate_chart(df):
         print("No DataFrame to plot.")
         return
 
-    # Convert 'START_DATE' to datetime and set as index
+    # Convert 'START_DATE' to datetime if it's not already
     df['START_DATE'] = pd.to_datetime(df['START_DATE'])
+
+    # Find the latest date in the DataFrame
+    latest_date = df['START_DATE'].dt.date.max()
+
+    # Filter the DataFrame to include only the latest day
+    df = df[df['START_DATE'].dt.date == latest_date]
+
+    # Set 'START_DATE' as the index
     df.set_index('START_DATE', inplace=True)
 
     # Create the plot
@@ -156,8 +164,8 @@ def generate_chart(df):
     plt.plot(df.index, df['VALUE'], marker='o', linestyle='-', color='royalblue', linewidth=2, markersize=6, label='Daily Consumption')
 
     # Add titles and labels
-    plt.title('Daily Electricity Consumption in France', fontsize=16, fontweight='bold')
-    plt.xlabel('Date', fontsize=14)
+    plt.title(f'Daily Electricity Consumption in France ({latest_date})', fontsize=16, fontweight='bold')
+    plt.xlabel('Time', fontsize=14)
     plt.ylabel('Total Consumption (MWh)', fontsize=14)
     plt.grid(True, which='both', linestyle='--', linewidth=0.7)
     
@@ -173,7 +181,7 @@ def generate_chart(df):
     plt.savefig('electricity_consumption_chart.png', dpi=300)  # Save with high resolution
     plt.close()  # Close the plot to free up memory
 
-    print("Chart saved as 'electricity_consumption_chart.png'.")
+    print(f"Chart saved as 'electricity_consumption_chart_filtered.png' for {latest_date}.")
 
 # Main execution
 def main():

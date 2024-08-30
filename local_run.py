@@ -7,13 +7,31 @@ import requests
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
+from dotenv import load_dotenv
+from pathlib import Path
+from dotenv import dotenv_values
 
-TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
-API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
+
+# Specify the path to your .env file
+dotenv_path = Path(r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\.env')
+
+config = dotenv_values(dotenv_path)
+print(config)
+
+# Load the .env file
+load_dotenv(dotenv_path=dotenv_path)
 
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+
+# Print the loaded values to verify
+print(f"CLIENT_ID: {CLIENT_ID}")
+print(f"CLIENT_SECRET: {CLIENT_SECRET}")
+
+TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
+API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
+
 # Retrieve Snowflake credentials from environment variables
 SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')
 SNOWFLAKE_PASSWORD = os.getenv('SNOWFLAKE_PASSWORD')
@@ -96,54 +114,7 @@ def extract_values_to_dataframe(data):
     
     return df
 
-# Function to upload DataFrame to Snowflake using a merge operation
-def upload_dataframe_to_snowflake(df):
-    if df is None:
-        print("No DataFrame to upload.")
-        return
 
-    conn = snowflake.connector.connect(
-        user=SNOWFLAKE_USER,
-        password=SNOWFLAKE_PASSWORD,
-        account=SNOWFLAKE_ACCOUNT,
-        warehouse=SNOWFLAKE_WAREHOUSE,
-        database=SNOWFLAKE_DATABASE,
-        schema=SNOWFLAKE_SCHEMA
-    )
-
-    try:
-        # Use a temporary table to store the incoming data
-        temp_table = "TEMP_ELECTRICITY_CONSUMPTION"
-        
-        # Create temporary table (if not exists)
-        conn.cursor().execute(f"""
-            CREATE OR REPLACE TEMPORARY TABLE {temp_table} LIKE {SNOWFLAKE_TABLE}
-        """)
-        
-        # Use the Snowflake Connector's write_pandas function to insert data into the temp table
-        from snowflake.connector.pandas_tools import write_pandas
-        success, nchunks, nrows, _ = write_pandas(conn, df, temp_table)
-        
-        # Perform a merge to insert only the new rows
-        merge_query = f"""
-            MERGE INTO {SNOWFLAKE_TABLE} AS target
-            USING {temp_table} AS source
-            ON target.START_DATE = source.START_DATE 
-               AND target.END_DATE = source.END_DATE
-            WHEN NOT MATCHED THEN
-            INSERT (START_DATE, END_DATE, UPDATED_DATE, VALUE)
-            VALUES (source.START_DATE, source.END_DATE, source.UPDATED_DATE, source.VALUE);
-        """
-        
-        conn.cursor().execute(merge_query)
-        print(f"Data merged successfully: {nrows} new rows inserted.")
-        
-    except Exception as e:
-        print(f"Failed to upload DataFrame to Snowflake: {e}")
-    finally:
-        conn.close()
-
-# Function to generate a chart from the DataFrame
 def generate_chart(df):
     if df is None:
         print("No DataFrame to plot.")
@@ -199,7 +170,8 @@ def generate_chart(df):
     plt.savefig(f'electricity_consumption_chart_{latest_date}.png', dpi=300)
     plt.close()
 
-    print(f"New chart saved as 'electricity_consumption_chart.png'.")
+    print(f"New chart saved as 'electricity_consumption_chart_{latest_date}.png'.")
+
 
 # Main execution
 def main():
@@ -212,9 +184,6 @@ def main():
     if df is not None:
         print("DataFrame created successfully.")
         print(df.tail())  # Display the last few rows of the DataFrame
-        
-        print("Uploading DataFrame to Snowflake...")
-        upload_dataframe_to_snowflake(df)
 
         print("Generating chart...")
         generate_chart(df)
@@ -223,3 +192,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

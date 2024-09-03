@@ -13,7 +13,7 @@ This project showcases an automated pipeline that queries the RTE (Réseau de Tr
 
 1. **Data Extraction**: Python script queries the RTE API for daily energy consumption data.
 2. **Data Storage**: The data is stored in Snowflake, ensuring a scalable and reliable database solution.
-3. **Graph Generation**: A Python script generates a line graph based on the stored data.
+3. **Graph Generation**: A Python script generates a line graph based on the latest queried data.
 4. **Automation**: GitHub Actions trigger the entire process daily, updating the graph automatically in the repository.
 
 ## Example Graph

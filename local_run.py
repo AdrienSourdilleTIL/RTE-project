@@ -25,9 +25,6 @@ load_dotenv(dotenv_path=dotenv_path)
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
-# Print the loaded values to verify
-print(f"CLIENT_ID: {CLIENT_ID}")
-print(f"CLIENT_SECRET: {CLIENT_SECRET}")
 
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'

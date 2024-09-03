@@ -11,9 +11,24 @@ import matplotlib.dates as mdates
 TOKEN_URL = 'https://digital.iservices.rte-france.com/token/oauth/'
 API_URL = 'https://digital.iservices.rte-france.com/open_api/consumption/v1/short_term'
 
+from dotenv import load_dotenv
+from pathlib import Path
+from dotenv import dotenv_values
+
+
+# Specify the path to your .env file
+dotenv_path = Path(r'C:\Users\AdrienSourdille\Documents\GitHub\RTE-project\.venv\.env')
+
+config = dotenv_values(dotenv_path)
+print(config)
+
+# Load the .env file
+load_dotenv(dotenv_path=dotenv_path)
+
 # Retrieve API credentials from environment variables
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+
 # Retrieve Snowflake credentials from environment variables
 SNOWFLAKE_USER = os.getenv('SNOWFLAKE_USER')
 SNOWFLAKE_PASSWORD = os.getenv('SNOWFLAKE_PASSWORD')
@@ -22,6 +37,7 @@ SNOWFLAKE_WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE')
 SNOWFLAKE_DATABASE = os.getenv('SNOWFLAKE_DATABASE')
 SNOWFLAKE_SCHEMA = os.getenv('SNOWFLAKE_SCHEMA')
 SNOWFLAKE_TABLE = os.getenv('SNOWFLAKE_TABLE')  # Table name you created
+
 
 # Function to get the OAuth2 token
 def get_token():
@@ -196,7 +212,7 @@ def generate_chart(df):
 
     # Save the chart
     plt.tight_layout()
-    plt.savefig(f'electricity_consumption_chart_{latest_date}.png', dpi=300)
+    plt.savefig(f'electricity_consumption_chart.png', dpi=300)
     plt.close()
 
     print(f"New chart saved as 'electricity_consumption_chart.png'.")

@@ -1,5 +1,7 @@
 # RTE Energy Consumption Dashboard
 
+⚠️ Note: This project is no longer running, and the data is not being refreshed daily. As a result, the graph is not up to date. This is because the data was stored in a Snowflake trial account that has since expired. Nevertheless, this remains a good example of how such a data pipeline and visualization workflow can be implemented.
+
 This project showcases an automated pipeline that queries the RTE (Réseau de Transport d'Électricité) API to retrieve daily energy consumption data. The data is then stored in a Snowflake database and visualized as a line graph, which is updated daily. The entire process is automated using GitHub Actions.
 
 ## Key Features
